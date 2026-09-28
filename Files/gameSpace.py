@@ -23,6 +23,10 @@ class Player:
             self._shiprect.x = self._shiprect.x - 2
         if pressed[pygame.K_RIGHT] or pressed[pygame.K_d]:
             self._shiprect.x = self._shiprect.x + 2
+        if pressed[pygame.K_UP] or pressed[pygame.K_w]:
+            self._shiprect.y = self._shiprect.y - 2
+        if pressed[pygame.K_DOWN] or pressed[pygame.K_s]:
+            self._shiprect.y = self._shiprect.y + 2
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0,0)
 
@@ -49,14 +53,17 @@ clock = pygame.time.Clock()
 
 keep_playing=True
 
-while keep_playing==True:
+#ship.set_shiprect(x1).x
+#ship.set_shiprect(y1).y
+
+while keep_playing:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             keep_playing = False
 
     screen.fill((0, 0, 0))
     ship.set_image(pygame.transform.scale(shipImg, (shipImg_width*0.1, shipImg_height*0.1)))
-    screen.blit(ship.get_image(), (x1,y1))
+    screen.blit(ship.get_image(), (ship.get_shiprect().x,ship.get_shiprect().y))
     ship.move()
 
     pygame.display.update()
