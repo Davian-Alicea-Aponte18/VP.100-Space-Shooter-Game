@@ -53,9 +53,6 @@ clock = pygame.time.Clock()
 
 keep_playing=True
 
-#ship.set_shiprect(x1).x
-#ship.set_shiprect(y1).y
-
 while keep_playing:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -63,7 +60,7 @@ while keep_playing:
 
     screen.fill((0, 0, 0))
     ship.set_image(pygame.transform.scale(shipImg, (shipImg_width*0.1, shipImg_height*0.1)))
-    screen.blit(ship.get_image(), (ship.get_shiprect().x,ship.get_shiprect().y))
+    screen.blit(ship.get_image(), (ship.get_shiprect().x + x1,ship.get_shiprect().y + y1))
     ship.move()
 
     pygame.display.update()
