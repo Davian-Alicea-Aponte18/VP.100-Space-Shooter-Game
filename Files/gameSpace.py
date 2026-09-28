@@ -17,6 +17,9 @@ class Player:
     def get_image(self):
         return self._image
 
+    def draw_player(self, x1, y1):
+        return screen.blit(self._image, (self._shiprect.x + x1,self._shiprect.y + y1))
+
     def move(self):
         pressed = pygame.key.get_pressed()
         if pressed[pygame.K_LEFT] or pressed[pygame.K_a]:
@@ -60,7 +63,7 @@ while keep_playing:
 
     screen.fill((0, 0, 0))
     ship.set_image(pygame.transform.scale(shipImg, (shipImg_width*0.1, shipImg_height*0.1)))
-    screen.blit(ship.get_image(), (ship.get_shiprect().x + x1,ship.get_shiprect().y + y1))
+    ship.draw_player(x1, y1)
     ship.move()
 
     pygame.display.update()
