@@ -3,7 +3,7 @@ import pygame
 import os
 
 class Player:
-    def __init__(self, shiprect, image):
+    def __init__(self, shiprect, image, bullets):
       self._shiprect=shiprect
       self._image=image
 
@@ -16,6 +16,11 @@ class Player:
         self._image=image
     def get_image(self):
         return self._image
+
+    def set_bullets(self, bullets):
+        self._bullets=bullets
+    def get_bullets(self):
+        return self._bullets
 
     def draw_player(self, screen, x1, y1):
         return screen.blit(self._image, (self._shiprect.x + x1,self._shiprect.y + y1))
@@ -31,10 +36,38 @@ class Player:
         if pressed[pygame.K_DOWN] or pressed[pygame.K_s]:
             self._shiprect.y = self._shiprect.y + 2
 
-    def shoot(self, screen, WHITE):
+    def shoot(self, screen, bullet_num):
+        bullet_list=self._bullets[bullet_num-1]
         pressed = pygame.key.get_pressed()
         if pressed[pygame.K_SPACE]:
-            pygame.draw.rect(screen, WHITE, [500, 500, 20, 15])
+            bullet=bullet_list.create_bullet(screen)
+            self._bullets.append(bullet)
+            while bullet_list.get_y() > 0:
+                bullet.move_ip(bullet_list.get_x(), bullet_list.get_y() - 2)
+
+class Bullet:
+    def __init__(self, x, y, color):
+        self._x=x
+        self._y=y
+        self._color=color
+
+    def set_x(self, x):
+        self._x=x
+    def get_x(self):
+        return self._x
+
+    def set_y(self, y):
+        self._y=y
+    def get_y(self):
+        return self._y
+
+    def set_color(self, color):
+        self._color=color
+    def get_color(self):
+        return self._color
+
+    def create_bullet(self, screen):
+        return pygame.draw.rect(screen, self._color, (self._x, self._y, 15, 30))
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0,0)
 
@@ -49,9 +82,11 @@ shipImg = pygame.image.load('../Images/galaga-ship.png')
 ship_rect = shipImg.get_rect()
 shipImg_width = ship_rect.width
 shipImg_height = ship_rect.height
-ship=Player(ship_rect, shipImg)
+ship=Player(ship_rect, shipImg, [])
 x1 = 700
 y1 = 640
+player_bullet=Bullet(x1, y1, WHITE)
+ship.set_bullets([player_bullet])
 
 screen = pygame.display.set_mode((screen_width,screen_height))
 
@@ -72,7 +107,7 @@ while keep_playing:
     ship.set_image(pygame.transform.scale(shipImg, (shipImg_width*0.1, shipImg_height*0.1)))
     ship.draw_player(screen, x1, y1)
     ship.move()
-    ship.shoot(screen, WHITE)
+    ship.shoot(screen, 1)
 
     pygame.display.update()
 
