@@ -40,19 +40,17 @@ class Player:
     def shoot(self, screen, x1, y1, color):
         pressed = pygame.key.get_pressed()
         if pressed[pygame.K_SPACE]:
-            player_bullet=Bullet(self._shiprect.x + x1, self._shiprect.y + y1, color)
+            pygame.time.delay(20)
+            player_bullet=Bullet(self._shiprect.x + x1 + 15, self._shiprect.y + y1, color)
             self._bullets.append(player_bullet)
             for bullet in self._bullets:
-                player_bullet.draw_bullet(screen)
-                player_bullet.update_bullet()
-                if player_bullet.get_bulletrect().y < 0:
-                    player_bullet.set_bulletrect(ship.get_shiprect().x + x1, ship.get_shiprect().y + y1)
+                bullet.draw_bullet(screen)
 
 class Bullet:
     def __init__(self, x, y, color):
         self._x=x
         self._y=y
-        self._bulletrect = pygame.Rect(self._x, self._y, 15, 30)
+        self._bulletrect = pygame.Rect(self._x, self._y, 10, 30)
         self._color=color
 
     def set_x(self, x):
@@ -66,7 +64,7 @@ class Bullet:
         return self._y
 
     def set_bulletrect(self, x, y):
-        self._bulletrect = pygame.Rect(x, y, 15, 30)
+        self._bulletrect = pygame.Rect(x, y, 10, 30)
     def get_bulletrect(self):
         return self._bulletrect
 
@@ -79,11 +77,8 @@ class Bullet:
         pygame.draw.rect(screen, self._color, self._bulletrect)
 
     def update_bullet(self):
-        #pressed = pygame.key.get_pressed()
-        #if pressed[pygame.K_SPACE]:
-            #while self._bulletrect.y > 0:
-                self._bulletrect.y = self._bulletrect.y - 2
-                self._bulletrect.move(self._bulletrect.x, self._bulletrect.y)
+        self._bulletrect.y = self._bulletrect.y - 2
+        self._bulletrect.move(self._bulletrect.x, self._bulletrect.y)
 
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0,0)
@@ -123,6 +118,9 @@ while keep_playing:
     ship.draw_player(screen, x1, y1)
     ship.move()
     ship.shoot(screen, x1, y1, WHITE)
+    for bullet in ship.get_bullets():
+        bullet.update_bullet()
+        bullet.draw_bullet(screen)
 
     pygame.display.update()
 
