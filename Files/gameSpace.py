@@ -38,13 +38,8 @@ class Player:
             self._shiprect.y = self._shiprect.y + 2
 
     def shoot(self, screen, x1, y1, color):
-        pressed = pygame.key.get_pressed()
-        if pressed[pygame.K_SPACE]:
-            pygame.time.delay(20)
-            player_bullet=Bullet(self._shiprect.x + x1 + 15, self._shiprect.y + y1, color)
-            self._bullets.append(player_bullet)
-            for bullet in self._bullets:
-                bullet.draw_bullet(screen)
+        player_bullet=Bullet(self._shiprect.x + x1 + 15, self._shiprect.y + y1, color)
+        self._bullets.append(player_bullet)
 
 class Bullet:
     def __init__(self, x, y, color):
@@ -112,15 +107,20 @@ while keep_playing:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             keep_playing = False
-
+        elif event.type == pygame.KEYDOWN:
+            pressed = pygame.key.get_pressed()
+            if pressed[pygame.K_SPACE]:
+                ship.shoot(screen, x1, y1, WHITE)
+                           
     screen.fill((0, 0, 0))
     ship.set_image(pygame.transform.scale(shipImg, (shipImg_width*0.1, shipImg_height*0.1)))
     ship.draw_player(screen, x1, y1)
     ship.move()
-    ship.shoot(screen, x1, y1, WHITE)
     for bullet in ship.get_bullets():
         bullet.update_bullet()
         bullet.draw_bullet(screen)
+        if bullet.get_bulletrect().y < bullet.get_bulletrect().height * -1:
+            ship.get_bullets().remove(bullet)
 
     pygame.display.update()
 
