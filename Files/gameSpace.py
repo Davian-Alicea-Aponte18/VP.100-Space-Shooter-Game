@@ -1,19 +1,17 @@
 import pygame
-
 import random
-
 import os
 
-class Player:
-    def __init__(self, shiprect, image, bullets):
-      self._shiprect=shiprect
+class GameObject():
+    def __init__(self, objectrect, image, bullets):
+      self._objectrect=objectrect
       self._image=image
       self._bullets=bullets
 
-    def set_shiprect(self, shiprect):
-        self._shiprect=shiprect
-    def get_shiprect(self):
-        return self._shiprect
+    def set_objectrect(self, objectrect):
+        self._objectrect=objectrect
+    def get_objectrect(self):
+        return self._objectrect
 
     def set_image(self, image):
         self._image=image
@@ -25,47 +23,27 @@ class Player:
     def get_bullets(self):
         return self._bullets
 
-    def draw_player(self, screen, x1, y1):
-        screen.blit(self._image, (self._shiprect.x + x1,self._shiprect.y + y1))
+    def draw_object(self, screen):
+        screen.blit(self._image, (self._objectrect.x,self._objectrect.y))
 
+class Player(GameObject):
     def move(self):
         pressed = pygame.key.get_pressed()
         if pressed[pygame.K_LEFT] or pressed[pygame.K_a]:
-            self._shiprect.x = self._shiprect.x - 2
+            self._objectrect.x = self._objectrect.x - 2
         if pressed[pygame.K_RIGHT] or pressed[pygame.K_d]:
-            self._shiprect.x = self._shiprect.x + 2
+            self._objectrect.x = self._objectrect.x + 2
         if pressed[pygame.K_UP] or pressed[pygame.K_w]:
-            self._shiprect.y = self._shiprect.y - 2
+            self._objectrect.y = self._objectrect.y - 2
         if pressed[pygame.K_DOWN] or pressed[pygame.K_s]:
-            self._shiprect.y = self._shiprect.y + 2
+            self._objectrect.y = self._objectrect.y + 2
 
-    def shoot(self, screen, x1, y1, color):
-        player_bullet=Bullet(self._shiprect.x + x1 + 15, self._shiprect.y + y1, color)
+    def shoot(self, screen, color):
+        player_bullet=Bullet(self._objectrect.x + 15, self._objectrect.y, color)
         self._bullets.append(player_bullet)
 
-class Enemy(Player):
-    def __init__(self, shiprect, image, bullets):
-      self._shiprect=shiprect
-      self._image=image
-      self._bullets=bullets
-
-    def set_shiprect(self, shiprect):
-        self._shiprect=shiprect
-    def get_shiprect(self):
-        return self._shiprect
-
-    def set_image(self, image):
-        self._image=image
-    def get_image(self):
-        return self._image
-
-    def set_bullets(self, bullets):
-        self._bullets=bullets
-    def get_bullets(self):
-        return self._bullets
-
-    def draw_enemy(self, screen):
-        screen.blit(self._image, (self._shiprect.x,self._shiprect.y))
+class Enemy(GameObject):
+    pass
 
 class Bullet:
     def __init__(self, x, y, color):
@@ -106,7 +84,7 @@ def spawn_enemy(enemies, ex, enemyImg_width, enemyImg_height):
     enemyship.set_image(pygame.transform.scale(enemyImg, (enemyImg_width*0.03, enemyImg_height*0.03)))
     enemies.append(enemyship)
     for enemy in enemies:
-        enemy.draw_enemy(screen)
+        enemy.draw_object(screen)
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0,0)
 
@@ -125,10 +103,10 @@ shipImg_width = ship_rect.width
 shipImg_height = ship_rect.height
 enemyImg_width = enemyship_rect.width
 enemyImg_height = enemyship_rect.height
-ship=Player(ship_rect, shipImg, [])
 enemies = []
 x1 = 700
 y1 = 640
+ship=Player(pygame.Rect(x1, y1, shipImg_width, shipImg_height), shipImg, [])
 
 screen = pygame.display.set_mode((screen_width,screen_height))
 
@@ -147,17 +125,17 @@ while keep_playing:
         elif event.type == pygame.KEYDOWN:
             pressed = pygame.key.get_pressed()
             if pressed[pygame.K_SPACE]:
-                ship.shoot(screen, x1, y1, WHITE)
+                ship.shoot(screen, WHITE)
                            
     screen.fill((0, 0, 0))
     ship.set_image(pygame.transform.scale(shipImg, (shipImg_width*0.1, shipImg_height*0.1)))
-    ship.draw_player(screen, x1, y1)
+    ship.draw_object(screen)
     if len(enemies) <= 11:
         ex = random.randint(0,screen_width-18)
         spawn_enemy(enemies, ex, enemyImg_width, enemyImg_height)
     else:
         for enemy in enemies:
-            enemy.draw_enemy(screen)
+            enemy.draw_object(screen)
     ship.move()
     for bullet in ship.get_bullets():
         bullet.update_bullet()
