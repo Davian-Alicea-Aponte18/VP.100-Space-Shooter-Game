@@ -64,8 +64,8 @@ class Enemy(Player):
     def get_bullets(self):
         return self._bullets
 
-    def draw_enemy(self, screen, screen_width):
-        screen.blit(self._image, (self._shiprect.x + random.randint(0,screen_width-20),self._shiprect.y))
+    def draw_enemy(self, screen):
+        screen.blit(self._image, (self._shiprect.x,self._shiprect.y))
 
 class Bullet:
     def __init__(self, x, y, color):
@@ -101,14 +101,12 @@ class Bullet:
         self._bulletrect.y = self._bulletrect.y - 2
         self._bulletrect.move(self._bulletrect.x, self._bulletrect.y)
 
-def spawn_enemy(enemies):
-    enemyship=Enemy(enemyship_rect, enemyImg,[])
+def spawn_enemy(enemies, ex, enemyImg_width, enemyImg_height):
+    enemyship=Enemy(pygame.Rect(ex, 0, enemyImg_width, enemyImg_height), enemyImg,[])
     enemyship.set_image(pygame.transform.scale(enemyImg, (enemyImg_width*0.03, enemyImg_height*0.03)))
     enemies.append(enemyship)
     for enemy in enemies:
-        enemy.draw_enemy(screen, screen_width)
-        if len(enemies) > 11:
-            enemies.remove(enemy)     
+        enemy.draw_enemy(screen)
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0,0)
 
@@ -153,16 +151,13 @@ while keep_playing:
                            
     screen.fill((0, 0, 0))
     ship.set_image(pygame.transform.scale(shipImg, (shipImg_width*0.1, shipImg_height*0.1)))
-    #enemyship=Enemy(enemyship_rect, enemyImg,[])
-    #enemyship.set_image(pygame.transform.scale(enemyImg, (enemyImg_width*0.03, enemyImg_height*0.03)))
-    #enemies.append(enemyship)
     ship.draw_player(screen, x1, y1)
-    '''for enemy in enemies:
-        if len(enemies) > 11:
-            enemies.remove(enemy)
-        else:
-            enemy.draw_enemy(screen, screen_width)'''
-    spawn_enemy(enemies)
+    if len(enemies) <= 11:
+        ex = random.randint(0,screen_width-18)
+        spawn_enemy(enemies, ex, enemyImg_width, enemyImg_height)
+    else:
+        for enemy in enemies:
+            enemy.draw_enemy(screen)
     ship.move()
     for bullet in ship.get_bullets():
         bullet.update_bullet()
