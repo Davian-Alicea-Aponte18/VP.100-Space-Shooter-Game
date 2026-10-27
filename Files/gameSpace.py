@@ -79,9 +79,9 @@ class Bullet:
         self._bulletrect.y = self._bulletrect.y - 2
         self._bulletrect.move(self._bulletrect.x, self._bulletrect.y)
 
-def spawn_enemy(enemies, ex, enemyImg_width, enemyImg_height):
+def spawn_enemies(enemies, ex, enemyImg_width, enemyImg_height):
     enemyship=Enemy(pygame.Rect(ex, 0, enemyImg_width, enemyImg_height), enemyImg,[])
-    enemyship.set_image(pygame.transform.scale(enemyImg, (enemyImg_width*0.03, enemyImg_height*0.03)))
+    enemyship.set_image(pygame.transform.scale(enemyImg, (enemyImg_width*0.03 , enemyImg_height*0.03)))
     enemies.append(enemyship)
     for enemy in enemies:
         enemy.draw_object(screen)
@@ -101,8 +101,10 @@ ship_rect = shipImg.get_rect()
 enemyship_rect = enemyImg.get_rect()
 shipImg_width = ship_rect.width
 shipImg_height = ship_rect.height
-enemyImg_width = enemyship_rect.width
-enemyImg_height = enemyship_rect.height
+enemyImg_width = enemyship_rect.width - 1
+enemyImg_height = enemyship_rect.height - 1
+print(enemyImg_width*0.03)
+print(enemyImg_height*0.03)
 enemies = []
 x1 = 700
 y1 = 640
@@ -131,8 +133,8 @@ while keep_playing:
     ship.set_image(pygame.transform.scale(shipImg, (shipImg_width*0.1, shipImg_height*0.1)))
     ship.draw_object(screen)
     if len(enemies) <= 11:
-        ex = random.randint(0,screen_width-18)
-        spawn_enemy(enemies, ex, enemyImg_width, enemyImg_height)
+        ex = random.randint(0,screen_width-45)
+        spawn_enemies(enemies, ex, enemyImg_width, enemyImg_height)
     else:
         for enemy in enemies:
             enemy.draw_object(screen)
