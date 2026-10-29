@@ -103,8 +103,6 @@ shipImg_width = ship_rect.width
 shipImg_height = ship_rect.height
 enemyImg_width = enemyship_rect.width - 1
 enemyImg_height = enemyship_rect.height - 1
-print(enemyImg_width*0.03)
-print(enemyImg_height*0.03)
 enemies = []
 x1 = 700
 y1 = 640
@@ -136,6 +134,12 @@ while keep_playing:
         ex = random.randint(0,screen_width-45)
         spawn_enemies(enemies, ex, enemyImg_width, enemyImg_height)
     else:
+        for i in range (len(enemies)):
+            for x in range (len(enemies)):
+                if enemies[i].get_objectrect().x % enemies[x].get_objectrect().x < 45 and enemies[i].get_objectrect().x % enemies[x].get_objectrect().x != 0:
+                    enemies[x].set_objectrect(pygame.Rect(enemies[x].get_objectrect().x + 45, enemies[x].get_objectrect().y, enemies[x].get_objectrect().width, enemies[x].get_objectrect().height))
+                    x+=1
+            i+=1
         for enemy in enemies:
             enemy.draw_object(screen)
     ship.move()
