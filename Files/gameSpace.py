@@ -90,8 +90,8 @@ os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0,0)
 
 pygame.init()
 
-screen_width=1400
-screen_height=700
+screen_width=1395
+screen_height=720
 
 WHITE = (255, 255, 255)
 
@@ -104,8 +104,9 @@ shipImg_height = ship_rect.height
 enemyImg_width = enemyship_rect.width - 1
 enemyImg_height = enemyship_rect.height - 1
 enemies = []
-x1 = 700
+x1 = 675
 y1 = 640
+ex = 45
 ship=Player(pygame.Rect(x1, y1, shipImg_width, shipImg_height), shipImg, [])
 
 screen = pygame.display.set_mode((screen_width,screen_height))
@@ -130,16 +131,13 @@ while keep_playing:
     screen.fill((0, 0, 0))
     ship.set_image(pygame.transform.scale(shipImg, (shipImg_width*0.1, shipImg_height*0.1)))
     ship.draw_object(screen)
-    if len(enemies) <= 11:
-        ex = random.randint(0,screen_width-45)
+    if len(enemies) <= 15:
         spawn_enemies(enemies, ex, enemyImg_width, enemyImg_height)
+        if ex < screen_width - 45:
+            ex+=90
+        else:
+            ex=45 
     else:
-        for i in range (len(enemies)):
-            for x in range (len(enemies)):
-                if enemies[i].get_objectrect().x % enemies[x].get_objectrect().x < 45 and enemies[i].get_objectrect().x % enemies[x].get_objectrect().x != 0:
-                    enemies[x].set_objectrect(pygame.Rect(enemies[x].get_objectrect().x + 45, enemies[x].get_objectrect().y, enemies[x].get_objectrect().width, enemies[x].get_objectrect().height))
-                    x+=1
-            i+=1
         for enemy in enemies:
             enemy.draw_object(screen)
     ship.move()
@@ -148,6 +146,12 @@ while keep_playing:
         bullet.draw_bullet(screen)
         if bullet.get_bulletrect().y < bullet.get_bulletrect().height * -1:
             ship.get_bullets().remove(bullet)
+    for enemy in enemies:
+        enemy.get_objectrect().y = enemy.get_objectrect().y + 2
+        enemy.get_objectrect().move(enemy.get_objectrect().x, enemy.get_objectrect().y)
+        enemy.draw_object(screen)
+        if enemy.get_objectrect().y > enemy.get_objectrect().height + screen_height:
+            enemies.remove(enemy)
 
     pygame.display.update()
 
