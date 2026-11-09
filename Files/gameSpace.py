@@ -150,7 +150,7 @@ while keep_playing:
         enemy.get_objectrect().y = enemy.get_objectrect().y + 2
         enemy.get_objectrect().move(enemy.get_objectrect().x, enemy.get_objectrect().y)
         enemy.draw_object(screen)
-        if enemy.get_objectrect().y > enemy.get_objectrect().height + screen_height:
+        if enemy.get_objectrect().y > screen_height:
             enemies.remove(enemy)
 
     pygame.display.update()
