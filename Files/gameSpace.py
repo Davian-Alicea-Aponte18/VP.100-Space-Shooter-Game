@@ -86,6 +86,13 @@ def spawn_enemies(enemies, ex, enemyImg_width, enemyImg_height):
     for enemy in enemies:
         enemy.draw_object(screen)
 
+def collide(bullets, enemies):
+    for bullet in bullets:
+        for enemy in enemies:
+            if pygame.Rect.colliderect(bullet.get_bulletrect(), enemy.get_objectrect()):
+                print("an enemy was hit")
+                break
+
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0,0)
 
 pygame.init()
@@ -127,6 +134,7 @@ while keep_playing:
             pressed = pygame.key.get_pressed()
             if pressed[pygame.K_SPACE]:
                 ship.shoot(screen, WHITE)
+            collide(ship.get_bullets(),enemies)
                            
     screen.fill((0, 0, 0))
     ship.set_image(pygame.transform.scale(shipImg, (shipImg_width*0.1, shipImg_height*0.1)))
