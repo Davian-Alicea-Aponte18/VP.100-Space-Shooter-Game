@@ -81,7 +81,7 @@ class Bullet:
 
 def spawn_enemies(enemies, ex, enemyImg_width, enemyImg_height):
     enemyship=Enemy(pygame.Rect(ex, 0, enemyImg_width, enemyImg_height), enemyImg,[])
-    enemyship.set_image(pygame.transform.scale(enemyImg, (enemyImg_width*0.03 , enemyImg_height*0.03)))
+    enemyship.set_image(pygame.transform.scale(enemyImg, (enemyImg_width, enemyImg_height)))
     enemies.append(enemyship)
     for enemy in enemies:
         enemy.draw_object(screen)
@@ -90,7 +90,9 @@ def collide(bullets, enemies):
     for bullet in bullets:
         for enemy in enemies:
             if pygame.Rect.colliderect(bullet.get_bulletrect(), enemy.get_objectrect()):
-                print("an enemy was hit")
+                print("hit confirmed")
+                enemies.remove(enemy)
+                bullets.remove(bullet)
                 break
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0,0)
@@ -134,13 +136,12 @@ while keep_playing:
             pressed = pygame.key.get_pressed()
             if pressed[pygame.K_SPACE]:
                 ship.shoot(screen, WHITE)
-            collide(ship.get_bullets(),enemies)
                            
     screen.fill((0, 0, 0))
     ship.set_image(pygame.transform.scale(shipImg, (shipImg_width*0.1, shipImg_height*0.1)))
     ship.draw_object(screen)
     if len(enemies) <= 15:
-        spawn_enemies(enemies, ex, enemyImg_width, enemyImg_height)
+        spawn_enemies(enemies, ex, enemyImg_width*0.03, enemyImg_height*0.03)
         if ex < screen_width - 45:
             ex+=90
         else:
@@ -160,6 +161,7 @@ while keep_playing:
         enemy.draw_object(screen)
         if enemy.get_objectrect().y > screen_height:
             enemies.remove(enemy)
+    collide(ship.get_bullets(),enemies)
 
     pygame.display.update()
 
