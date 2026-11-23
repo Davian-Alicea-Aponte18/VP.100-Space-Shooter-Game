@@ -86,14 +86,21 @@ def spawn_enemies(enemies, ex, enemyImg_width, enemyImg_height):
     for enemy in enemies:
         enemy.draw_object(screen)
 
-def collide(bullets, enemies):
-    for bullet in bullets:
-        for enemy in enemies:
-            if pygame.Rect.colliderect(bullet.get_bulletrect(), enemy.get_objectrect()):
-                print("hit confirmed")
-                enemies.remove(enemy)
-                bullets.remove(bullet)
+def collide(bullets, enemies, tbr):
+    for i1 in range(len(bullets)):
+        if len(tbr) > 1:
+            break
+        for i2 in range(len(enemies)):
+            if pygame.Rect.colliderect(bullets[i1].get_bulletrect(), enemies[i2].get_objectrect()):
+                print("index of bullet:")
+                print(i1)
+                print("index of enemy:")
+                print(i2)
+                tbr.append(bullets.pop(i1))
+                tbr.append(enemies.pop(i2))
                 break
+            i2+=1   
+        i1+=1
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0,0)
 
@@ -161,7 +168,7 @@ while keep_playing:
         enemy.draw_object(screen)
         if enemy.get_objectrect().y > screen_height:
             enemies.remove(enemy)
-    collide(ship.get_bullets(),enemies)
+    collide(ship.get_bullets(),enemies, [])
 
     pygame.display.update()
 
