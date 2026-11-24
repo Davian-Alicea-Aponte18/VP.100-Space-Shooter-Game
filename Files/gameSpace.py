@@ -91,11 +91,7 @@ def collide(bullets, enemies, tbr):
         if len(tbr) > 1:
             break
         for i2 in range(len(enemies)):
-            if pygame.Rect.colliderect(bullets[i1].get_bulletrect(), enemies[i2].get_objectrect()):
-                print("index of bullet:")
-                print(i1)
-                print("index of enemy:")
-                print(i2)
+            if pygame.Rect.colliderect(bullets[i1].get_bulletrect(), enemies[i2].get_objectrect()):                
                 tbr.append(bullets.pop(i1))
                 tbr.append(enemies.pop(i2))
                 break
@@ -111,19 +107,25 @@ screen_height=720
 
 WHITE = (255, 255, 255)
 
+Dead = False
 shipImg = pygame.image.load('../Images/galaga-ship.png')
 enemyImg = pygame.image.load('../Images/galaga-enemy-ship.png')
+playerDead = pygame.image.load('../Images/player_death.png')
 ship_rect = shipImg.get_rect()
 enemyship_rect = enemyImg.get_rect()
+dead_rect = playerDead.get_rect()
 shipImg_width = ship_rect.width
 shipImg_height = ship_rect.height
 enemyImg_width = enemyship_rect.width - 1
 enemyImg_height = enemyship_rect.height - 1
+dead_width = dead_rect.width
+dead_height = dead_rect.height
 enemies = []
 x1 = 675
 y1 = 640
 ex = 45
-ship=Player(pygame.Rect(x1, y1, shipImg_width, shipImg_height), shipImg, [])
+ship=Player(pygame.Rect(x1, y1, shipImg_width*0.1, shipImg_height*0.1), shipImg, [])
+ship.set_image(pygame.transform.scale(shipImg, (shipImg_width*0.1, shipImg_height*0.1)))
 
 screen = pygame.display.set_mode((screen_width,screen_height))
 
@@ -145,8 +147,9 @@ while keep_playing:
                 ship.shoot(screen, WHITE)
                            
     screen.fill((0, 0, 0))
-    ship.set_image(pygame.transform.scale(shipImg, (shipImg_width*0.1, shipImg_height*0.1)))
+
     ship.draw_object(screen)
+        
     if len(enemies) <= 15:
         spawn_enemies(enemies, ex, enemyImg_width*0.03, enemyImg_height*0.03)
         if ex < screen_width - 45:
@@ -156,19 +159,32 @@ while keep_playing:
     else:
         for enemy in enemies:
             enemy.draw_object(screen)
+
     ship.move()
+
     for bullet in ship.get_bullets():
         bullet.update_bullet()
         bullet.draw_bullet(screen)
         if bullet.get_bulletrect().y < bullet.get_bulletrect().height * -1:
             ship.get_bullets().remove(bullet)
+
     for enemy in enemies:
         enemy.get_objectrect().y = enemy.get_objectrect().y + 2
         enemy.get_objectrect().move(enemy.get_objectrect().x, enemy.get_objectrect().y)
         enemy.draw_object(screen)
         if enemy.get_objectrect().y > screen_height:
             enemies.remove(enemy)
+        elif pygame.Rect.colliderect(ship.get_objectrect(), enemy.get_objectrect()):
+            enemies.remove(enemy)
+            ship.set_image(pygame.transform.scale(playerDead, ((dead_width*0.1)+8, (dead_height*0.1)+8)))
+            print("GAME OVER")
+            Dead = True
+            pygame.time.wait(2000)
+
     collide(ship.get_bullets(),enemies, [])
+
+    if Dead:
+        keep_playing = False
 
     pygame.display.update()
 
